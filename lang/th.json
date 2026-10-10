@@ -1,0 +1,26 @@
+{
+  "GRIMCORE": {
+    "Title": "Grim Core",
+    "Open": "เปิด Grim Core",
+    "MenuHint": "ตั้งค่าธีมสีของโมดูล Grim ทุกตัวจากที่เดียว",
+    "GMOnly": "Grim Core: เฉพาะ GM เท่านั้นที่เปลี่ยนธีมรวมได้",
+    "Lead": "เลือกธีมที่นี่ แล้วโมดูล Grim ทุกตัวด้านล่างจะเปลี่ยนตาม ทั้งจอของคุณและของผู้เล่นทุกคน",
+    "Section": { "Theme": "ธีมสี", "Modules": "โมดูลที่เปลี่ยนตาม" },
+    "Preset": { "crimson": "Crimson", "ash": "Ash", "amethyst": "Amethyst", "abyss": "Abyss", "custom": "กำหนดเอง" },
+    "PresetHint": { "crimson": "ดำ-แดง", "ash": "ดำ-เทา", "amethyst": "ขาว-ม่วง", "abyss": "ดำ-น้ำเงิน", "custom": "สีของคุณ" },
+    "Custom": {
+      "Accent": "สีหลัก",
+      "Base": "พื้นผิว",
+      "Dark": "มืด",
+      "Light": "สว่าง",
+      "Tint": "สีหลักที่ซึมในพื้นหลัง",
+      "Hint": "สีที่มีความหมาย เช่น มิตร/ศัตรู ไฟสัญญาณ และสีทองของ Natural 20 จะคงเดิม"
+    },
+    "Mod": { "Theme": "ทั้งธีม", "Accent": "สีหลัก", "Panel": "แผง GM", "Missing": "ไม่ได้เปิดใช้" },
+    "Sample": "ปุ่ม",
+    "Reset": "กลับเป็น Crimson",
+    "Apply": "ใช้กับทุกตัว",
+    "Applied": "Grim Core: เปลี่ยนธีมให้โมดูล Grim ทุกตัวแล้ว",
+    "Failed": "Grim Core: อัปเดต {list} ไม่สำเร็จ"
+  }
+}

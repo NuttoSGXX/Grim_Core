@@ -1,0 +1,26 @@
+{
+  "GRIMCORE": {
+    "Title": "Grim Core",
+    "Open": "Open Grim Core",
+    "MenuHint": "One place to set the colour theme of every Grim module.",
+    "GMOnly": "Grim Core: only the Game Master can change the shared theme.",
+    "Lead": "Choose a theme here and every Grim module below follows it, for you and for every player.",
+    "Section": { "Theme": "Colour theme", "Modules": "Modules that follow" },
+    "Preset": { "crimson": "Crimson", "ash": "Ash", "amethyst": "Amethyst", "abyss": "Abyss", "custom": "Custom" },
+    "PresetHint": { "crimson": "Black & red", "ash": "Black & grey", "amethyst": "White & purple", "abyss": "Black & blue", "custom": "Your colour" },
+    "Custom": {
+      "Accent": "Accent colour",
+      "Base": "Surfaces",
+      "Dark": "Dark",
+      "Light": "Light",
+      "Tint": "Accent in backgrounds",
+      "Hint": "Friendly / hostile marks, signal lamps and Natural 20 gold keep their own colours."
+    },
+    "Mod": { "Theme": "Full theme", "Accent": "Accent colour", "Panel": "GM panel", "Missing": "Not active" },
+    "Sample": "Button",
+    "Reset": "Back to Crimson",
+    "Apply": "Apply to all",
+    "Applied": "Grim Core: theme applied to every Grim module.",
+    "Failed": "Grim Core: could not update {list}."
+  }
+}
