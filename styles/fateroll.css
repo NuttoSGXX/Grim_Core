@@ -1,0 +1,377 @@
+/* Grim FateRoll */
+@font-face { font-family: "GFR Cinzel"; font-weight: 400; font-display: swap; src: url("../fonts/cinzel-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "GFR Cinzel"; font-weight: 600; font-display: swap; src: url("../fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "GFR Cinzel"; font-weight: 700; font-display: swap; src: url("../fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "GFR Garamond"; font-style: italic; font-weight: 500; font-display: swap; src: url("../fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "GFR Garamond"; font-style: italic; font-weight: 600; font-display: swap; src: url("../fonts/cormorant-garamond-latin-600-italic.woff2") format("woff2"); }
+@font-face { font-family: "GFR Runic"; font-display: swap; src: url("../fonts/noto-sans-runic-runic-400-normal.woff2") format("woff2"); }
+/* numerals: Cinzel's "1" reads as "I", so every number uses Spectral */
+@font-face { font-family: "GFR Num"; font-weight: 700; font-display: swap; src: url("../fonts/spectral-latin-700-normal.woff2") format("woff2"); }
+
+/* =====================================================================
+   Overlay
+   ===================================================================== */
+.gfr-overlay {
+  --gfr-base: #c8141e;
+  --gfr-bone: #ebe0c9;
+  --gfr-dim: 0.8;
+  --gfr-s: 240px;
+  --gfr-head: 150px;
+  position: fixed; inset: 0; z-index: 9990;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding-bottom: 46px;
+  font-family: "GFR Cinzel", "Sarabun", "Noto Sans Thai", "Leelawadee UI", Georgia, serif;
+  color: var(--gfr-bone);
+  user-select: none; -webkit-user-select: none;
+  overflow: hidden;
+}
+.gfr-overlay *, .gfr-overlay *::before, .gfr-overlay *::after { box-sizing: border-box; }
+
+.gfr-veil {
+  position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 55%, color-mix(in srgb, var(--gfr-base) 9%, transparent), transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, calc(var(--gfr-dim) - 0.06)) 0%, rgba(0, 0, 0, calc(var(--gfr-dim) + 0.1)) 100%);
+}
+.gfr-overlay.is-open .gfr-veil { opacity: 1; }
+.gfr-overlay.is-closing { pointer-events: none; }
+.gfr-overlay.is-closing .gfr-head, .gfr-overlay.is-closing .gfr-stage, .gfr-overlay.is-closing .gfr-bar { opacity: 0; transition: opacity 0.45s ease; }
+
+/* ---------- header ---------- */
+.gfr-head {
+  position: relative; flex: none; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 0.5vh;
+  padding: 0 4vw; margin-bottom: calc(var(--gfr-s) * 0.1); text-align: center;
+}
+.gfr-pips { display: flex; gap: 9px; opacity: 0; animation: gfr-fade 0.8s 0.5s forwards; }
+.gfr-pips i { width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid var(--gfr-base); opacity: 0.55; }
+.gfr-pips i.on { background: var(--gfr-base); opacity: 1; box-shadow: 0 0 8px var(--gfr-base); }
+.gfr-line {
+  font-family: "GFR Garamond", "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600;
+  font-size: clamp(20px, 2.5vw, 46px); line-height: 1.15; letter-spacing: 0.01em;
+  text-shadow: 0 2px 14px #000, 0 0 2px #000;
+  opacity: 0; animation: gfr-line 1.5s 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.gfr-tier-easy .gfr-line { color: #f1ead9; font-weight: 500; }
+.gfr-tier-medium .gfr-line { color: #f4e3c4; }
+.gfr-tier-hard .gfr-line { color: #ffd8d0; text-shadow: 0 2px 14px #000, 0 0 26px color-mix(in srgb, var(--gfr-base) 85%, transparent), 0 0 2px #000; }
+.gfr-n1 .gfr-line { font-size: clamp(24px, 3.1vw, 56px); }
+.gfr-title {
+  display: flex; align-items: center; gap: 1.2em; margin-top: 0.4vh;
+  font-weight: 600; font-size: clamp(12px, 1.2vw, 22px); letter-spacing: 0.36em; text-transform: uppercase;
+  color: var(--gfr-bone); text-shadow: 0 0 12px #000;
+  opacity: 0; animation: gfr-fade 0.9s 1s forwards;
+}
+.gfr-title span { padding-left: 0.36em; }
+.gfr-title::before, .gfr-title::after { content: ""; width: clamp(40px, 9vw, 170px); height: 1px; background: linear-gradient(90deg, transparent, var(--gfr-base)); }
+.gfr-title::after { transform: scaleX(-1); }
+.gfr-n1 .gfr-title { font-size: clamp(14px, 1.5vw, 28px); }
+
+/* ---------- stage ---------- */
+.gfr-stage { position: relative; flex: none; width: 100%; display: flex; flex-direction: column; align-items: center; gap: calc(var(--gfr-s) * 0.07); }
+.gfr-row { display: flex; justify-content: center; gap: calc(var(--gfr-s) * 0.14); }
+.gfr-n1 .gfr-row, .gfr-n2 .gfr-row { gap: calc(var(--gfr-s) * 0.34); }
+
+.gfr-card {
+  --gfr-accent: var(--gfr-base);
+  --gfr-glow: color-mix(in srgb, var(--gfr-accent) 75%, transparent);
+  position: relative; flex: none; width: calc(var(--gfr-s) * 1.02);
+  display: flex; flex-direction: column; align-items: center;
+  font-size: calc(var(--gfr-s) / 15);
+  opacity: 0; animation: gfr-card-in 0.9s calc(0.75s + var(--i) * 0.09s) cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.gfr-card-title {
+  min-height: 2.5em; display: flex; align-items: flex-end; justify-content: center; text-align: center;
+  font-size: max(0.74em, 10px); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.25;
+  text-shadow: 0 0 10px #000;
+}
+.gfr-adv { height: 1.9em; margin: 0.25em 0 0.2em; font-size: max(0.6em, 8.5px); font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; line-height: 1.9em; text-shadow: 0 0 8px #000; }
+.gfr-adv.is-adv { color: #f1d9a0; }
+.gfr-adv.is-dis { color: color-mix(in srgb, var(--gfr-base) 70%, #ff8a80); }
+.gfr-adv.is-adv::before { content: "▲ "; font-size: 0.8em; }
+.gfr-adv.is-dis::before { content: "▼ "; font-size: 0.8em; }
+
+/* ---------- the sigil ---------- */
+.gfr-circle { position: relative; width: var(--gfr-s); height: var(--gfr-s); flex: none; transition: transform 0.5s ease; }
+.gfr-card.can-roll:not(.is-busy) .gfr-circle { cursor: pointer; }
+.gfr-card.can-roll:not(.is-busy) .gfr-circle:hover { transform: scale(1.03); }
+.gfr-card.is-rolling .gfr-circle { transform: scale(1.05); }
+
+.gfr-sigil { position: absolute; inset: 0; transition: opacity 0.8s ease; }
+.gfr-layer { position: absolute; inset: -6%; width: 112%; height: 112%; will-change: transform; }
+.gfr-l-runes { animation: gfr-spin 80s linear infinite; }
+.gfr-l-geo { animation: gfr-spin 130s linear infinite reverse; }
+.gfr-l-nums { animation: gfr-spin 100s linear infinite; }
+.gfr-l-nodes { animation: gfr-spin 64s linear infinite reverse; }
+.gfr-card:not(.is-mine) .gfr-sigil { opacity: 0.82; }
+
+.gfr-core {
+  position: absolute; inset: 24%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(4, 2, 3, 0.9) 0%, rgba(4, 2, 3, 0.7) 50%, color-mix(in srgb, var(--gfr-accent) 22%, transparent) 72%, transparent 88%);
+  animation: gfr-breathe 4.5s ease-in-out infinite;
+}
+.gfr-rays { position: absolute; inset: -32%; border-radius: 50%; opacity: 0; pointer-events: none; }
+
+.gfr-dice {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 2%;
+  pointer-events: none; transition: transform 0.55s cubic-bezier(0.3, 0.9, 0.3, 1);
+}
+.gfr-die { display: block; aspect-ratio: 1; height: auto; transition: opacity 0.5s, transform 0.5s, filter 0.5s; }
+.gfr-dice .gfr-d20 { width: 44%; }
+.gfr-dice.has-d4 .gfr-d20 { width: 40%; }
+.gfr-dice.gfr-dice-2 .gfr-d20 { width: 35%; }
+.gfr-dice.gfr-dice-2.has-d4 .gfr-d20 { width: 30%; }
+.gfr-d4s { width: 19%; display: flex; flex-direction: column; align-items: center; gap: 2%; }
+.gfr-dice.gfr-dice-2 .gfr-d4s { width: 16%; }
+.gfr-d4s .gfr-d4 { width: 100%; }
+.gfr-die.is-dropped { opacity: 0.32; transform: scale(0.78); filter: grayscale(0.9); }
+.gfr-die.is-kept { transform: scale(1.06); }
+.gfr-card.is-rolled .gfr-dice { transform: translateY(-10%) scale(0.86); }
+.gfr-card.is-rolled .gfr-core { inset: 15%; background: radial-gradient(circle, rgba(4, 2, 3, 0.95) 0%, rgba(4, 2, 3, 0.86) 52%, color-mix(in srgb, var(--gfr-accent) 14%, transparent) 72%, transparent 86%); }
+
+.gfr-total {
+  position: absolute; left: 0; right: 0; top: 60%; z-index: 1; text-align: center; pointer-events: none;
+  font-family: "GFR Num", Georgia, serif; font-size: 2.7em; font-weight: 700; line-height: 1; color: #fff7e8;
+  text-shadow: 0 0 0.12em #000, 0 0.05em 0.3em #000, 0 0 0.5em var(--gfr-glow);
+  opacity: 0; transform: scale(0.5);
+}
+.gfr-card.is-rolled .gfr-total { animation: gfr-pop 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) forwards; }
+.gfr-stamp {
+  position: absolute; left: 0; right: 0; top: 79%; z-index: 1; text-align: center; pointer-events: none;
+  font-size: max(0.6em, 8.5px); font-weight: 700; letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase;
+  text-shadow: 0 0 6px #000, 0 0 3px #000; opacity: 0; transition: opacity 0.6s 0.25s;
+}
+.gfr-card.is-rolled .gfr-stamp { opacity: 1; }
+.gfr-prompt {
+  position: absolute; left: 0; right: 0; top: 76.5%; text-align: center; pointer-events: none;
+  font-size: max(0.58em, 8.5px); font-weight: 700; letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase;
+  color: #fff; text-shadow: 0 0 4px #000, 0 0 8px #000, 0 0 14px var(--gfr-glow); opacity: 0; transition: opacity 0.3s;
+}
+.gfr-card.is-mine:not(.is-busy) .gfr-prompt { animation: gfr-pulse 1.5s 1.6s ease-in-out infinite; }
+.gfr-gm .gfr-card:not(.is-busy) .gfr-circle:hover .gfr-prompt { opacity: 1; }
+
+/* DC plaque on the lower rim */
+.gfr-dc {
+  position: absolute; left: 50%; top: 90.5%; transform: translateX(-50%); z-index: 3; pointer-events: none;
+  padding: 1.5px; background: var(--gfr-accent); transition: background 0.7s;
+  clip-path: polygon(0.8em 0, calc(100% - 0.8em) 0, 100% 50%, calc(100% - 0.8em) 100%, 0.8em 100%, 0 50%);
+  filter: drop-shadow(0 0 6px #000);
+}
+.gfr-dc > div {
+  display: flex; align-items: baseline; gap: 0.5em; padding: 0.2em 1.25em 0.16em; background: #0a0809; white-space: nowrap;
+  clip-path: polygon(0.8em 0, calc(100% - 0.8em) 0, 100% 50%, calc(100% - 0.8em) 100%, 0.8em 100%, 0 50%);
+}
+.gfr-dc span { font-size: max(0.5em, 7.5px); letter-spacing: 0.24em; opacity: 0.65; }
+.gfr-dc b { font-family: "GFR Num", Georgia, serif; font-size: 1.25em; font-weight: 700; color: #fff7e8; min-width: 1.2em; text-align: center; }
+.gfr-dc.is-unknown b { letter-spacing: 0.08em; opacity: 0.8; }
+.gfr-dc.is-secret > div { background: repeating-linear-gradient(135deg, #0a0809 0 5px, #1a0b0d 5px 10px); }
+.gfr-dc.is-secret b { opacity: 0.75; }
+.gfr-dc.is-secret span::after { content: " · hidden"; }
+.gfr-dc.is-revealed { animation: gfr-flip 0.7s ease; }
+
+.gfr-fx { position: absolute; inset: -35%; width: 170%; height: 170%; pointer-events: none; z-index: 2; }
+.gfr-cracks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.gfr-cracks path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.gfr-crack-b { stroke: #000; stroke-width: 3.4; opacity: 0.85; }
+.gfr-crack-f { stroke: #ff3b33; stroke-width: 1; }
+
+/* ---------- text under the sigil ---------- */
+.gfr-name {
+  margin-top: 1.25em; max-width: 118%; font-size: 1.32em; font-weight: 600; letter-spacing: 0.06em; line-height: 1.15; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 10px #000, 0 0 2px #000;
+}
+.gfr-card.is-mine .gfr-name { color: #fff; }
+.gfr-class {
+  margin-top: 0.3em; max-width: 124%; font-size: max(0.6em, 9px); letter-spacing: 0.18em; text-transform: uppercase; text-align: center; line-height: 1.3;
+  color: color-mix(in srgb, var(--gfr-bone) 72%, transparent); text-shadow: 0 0 8px #000;
+}
+.gfr-parts { margin-top: 0.6em; display: flex; flex-wrap: wrap; justify-content: center; row-gap: 0.35em; width: 118%; }
+.gfr-part { display: flex; flex-direction: column; align-items: center; padding: 0 max(0.5em, 5px); border-left: 1px solid color-mix(in srgb, var(--gfr-accent) 55%, transparent); }
+.gfr-part:first-child { border-left: 0; }
+.gfr-part b { font-family: "GFR Num", Georgia, serif; font-size: 1.02em; font-weight: 700; line-height: 1.1; color: #fff7e8; text-shadow: 0 0 8px #000; }
+.gfr-part em { font-style: normal; font-size: max(0.42em, 7.5px); letter-spacing: 0.12em; margin-top: 0.3em; opacity: 0.7; white-space: nowrap; }
+.gfr-part.is-die b { color: #f1d9a0; }
+.gfr-part.is-sum b { color: color-mix(in srgb, var(--gfr-accent) 60%, #ffb4ac); }
+.gfr-part.is-sum em { opacity: 0.9; }
+
+/* ---------- outcomes ---------- */
+.gfr-card.is-success:not(.is-nat20) { --gfr-accent: color-mix(in srgb, var(--gfr-base) 55%, #ff6a5c); }
+.gfr-card.is-success .gfr-sigil { opacity: 1; }
+.gfr-card.is-success .gfr-stamp { color: #fff3d6; }
+.gfr-card.is-failure:not(.is-nat1) .gfr-sigil { opacity: 0.4; }
+.gfr-card.is-failure .gfr-total { color: #b9aaa2; }
+.gfr-card.is-failure .gfr-stamp { color: color-mix(in srgb, var(--gfr-base) 70%, #ff9088); }
+
+/* Natural 20 */
+.gfr-card.is-nat20 { --gfr-accent: #f5c451; }
+.gfr-card.is-nat20 .gfr-sigil { opacity: 1; animation: gfr-flash 0.9s ease-out; }
+.gfr-card.is-nat20 .gfr-rays {
+  opacity: 1; transition: opacity 0.8s;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 214, 120, 0.2) 0deg 3deg, transparent 3deg 15deg, rgba(255, 240, 190, 0.11) 15deg 17deg, transparent 17deg 30deg);
+  -webkit-mask-image: radial-gradient(circle, #000 18%, transparent 68%); mask-image: radial-gradient(circle, #000 18%, transparent 68%);
+  animation: gfr-spin 26s linear infinite;
+}
+.gfr-card.is-nat20 .gfr-total {
+  background: linear-gradient(100deg, #e9a93a 0%, #ffe9a6 28%, #fffbe8 42%, #ffcb57 58%, #ffe9a6 78%, #e9a93a 100%); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none;
+  filter: drop-shadow(0 0 0.14em rgba(0, 0, 0, 0.9)) drop-shadow(0 0 0.3em rgba(255, 190, 70, 0.75));
+  animation: gfr-pop 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) forwards, gfr-shimmer 2.8s 0.6s linear infinite;
+}
+.gfr-card.is-nat20 .gfr-stamp { color: #ffe29a; text-shadow: 0 0 6px #000, 0 0 14px rgba(255, 190, 70, 0.9); }
+.gfr-card.is-nat20 .gfr-die.gfr-d20:not(.is-dropped) { filter: drop-shadow(0 0 0.5em rgba(255, 200, 90, 0.95)) drop-shadow(0 0.2em 0.4em #000); }
+.gfr-card.is-nat20 .gfr-name { color: #ffe9b0; }
+
+/* Natural 1 */
+.gfr-card.is-nat1 { --gfr-accent: #7a181d; }
+.gfr-card.is-nat1 .gfr-circle { animation: gfr-shake 0.6s linear; }
+.gfr-card.is-nat1 .gfr-sigil { opacity: 0.9; }
+.gfr-card.is-nat1 .gfr-core { inset: 10%; background: radial-gradient(circle, rgba(0, 0, 0, 0.96) 0%, rgba(20, 0, 2, 0.9) 45%, rgba(90, 0, 6, 0.4) 62%, transparent 74%); }
+.gfr-card.is-nat1 .gfr-cracks path { animation: gfr-crack 0.5s calc(var(--i) * 0.07s) cubic-bezier(0.3, 0, 0.2, 1) forwards; }
+.gfr-card.is-nat1 .gfr-total { color: #e0262e; text-shadow: 0 0 0.08em #000, 0 0 0.16em #000, 0 0.05em 0.3em #000, 0 0 0.7em rgba(160, 0, 0, 0.9); }
+.gfr-card.is-nat1 .gfr-stamp { color: #f0807a; }
+.gfr-card.is-nat1 .gfr-die { filter: grayscale(0.7) brightness(0.7); }
+.gfr-card.is-nat1 .gfr-name { color: #a79a90; }
+
+/* ---------- GM bar ---------- */
+.gfr-bar { position: absolute; left: 0; right: 0; bottom: 16px; display: flex; justify-content: center; gap: 10px; opacity: 0; animation: gfr-fade 0.8s 1.4s forwards; }
+.gfr-overlay button {
+  all: unset; box-sizing: border-box; cursor: pointer;
+  font-family: "GFR Cinzel", Georgia, serif; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gfr-bone);
+  padding: 9px 18px 8px; background: rgba(10, 8, 9, 0.88); border: 1px solid color-mix(in srgb, var(--gfr-base) 65%, transparent);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.gfr-overlay button:hover, .gfr-overlay button:focus-visible { background: color-mix(in srgb, var(--gfr-base) 26%, #0a0809); border-color: var(--gfr-base); color: #fff; }
+.gfr-overlay button.gfr-end { border-color: color-mix(in srgb, var(--gfr-bone) 40%, transparent); }
+.gfr-overlay.is-done button.gfr-end { background: var(--gfr-base); border-color: var(--gfr-base); color: #fff; }
+.gfr-overlay button.gfr-dismiss { position: absolute; top: 14px; right: 16px; padding: 2px 10px 4px; font-size: 18px; letter-spacing: 0; opacity: 0.35; border-color: transparent; background: transparent; }
+.gfr-overlay button.gfr-dismiss:hover { opacity: 1; }
+
+/* reduced effects */
+.gfr-low .gfr-die { filter: none !important; }
+.gfr-low .gfr-rays { display: none; }
+
+@keyframes gfr-spin { to { transform: rotate(360deg); } }
+@keyframes gfr-fade { to { opacity: 1; } }
+@keyframes gfr-line { 0% { opacity: 0; letter-spacing: 0.14em; filter: blur(8px); } 100% { opacity: 1; letter-spacing: 0.01em; filter: blur(0); } }
+@keyframes gfr-card-in { 0% { opacity: 0; transform: scale(0.72); filter: blur(10px); } 100% { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes gfr-breathe { 0%, 100% { opacity: 0.9; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes gfr-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes gfr-pop { 0% { opacity: 0; transform: scale(0.4); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes gfr-flip { 0% { transform: translateX(-50%) scaleY(1); } 50% { transform: translateX(-50%) scaleY(0); } 100% { transform: translateX(-50%) scaleY(1); } }
+@keyframes gfr-flash { 0% { filter: brightness(3.2); transform: scale(1.1); } 100% { filter: brightness(1); transform: scale(1); } }
+@keyframes gfr-shimmer { to { background-position: -250% 0; } }
+@keyframes gfr-crack { to { stroke-dashoffset: 0; } }
+@keyframes gfr-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); } 12% { transform: translate(-3.2%, 1.2%) rotate(-1.6deg); } 26% { transform: translate(2.8%, -1%) rotate(1.4deg); }
+  40% { transform: translate(-2.2%, -0.8%) rotate(-1deg); } 55% { transform: translate(1.6%, 0.8%) rotate(0.7deg); } 72% { transform: translate(-0.9%, 0.3%) rotate(-0.3deg); } 88% { transform: translate(0.4%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gfr-layer, .gfr-rays, .gfr-core { animation-duration: 600s !important; }
+  .gfr-card.is-nat1 .gfr-circle { animation: none; }
+}
+
+/* =====================================================================
+   GM panel
+   ===================================================================== */
+.gfr-panel {
+  --gfr-base: #c8141e; --gfr-bone: #e6dcc6;
+  position: fixed; z-index: 9980; width: 470px; max-width: calc(100vw - 16px); max-height: calc(100vh - 24px);
+  display: flex; flex-direction: column;
+  font-family: "GFR Cinzel", "Sarabun", "Noto Sans Thai", "Leelawadee UI", Georgia, serif; font-size: 12px; color: var(--gfr-bone);
+  background: linear-gradient(180deg, #131012 0%, #0b090a 100%);
+  border: 1px solid #3a1418; outline: 1px solid #000; outline-offset: 0;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75), inset 0 0 0 1px rgba(255, 255, 255, 0.02), inset 0 0 40px rgba(200, 20, 30, 0.05);
+}
+.gfr-panel *, .gfr-panel *::before, .gfr-panel *::after { box-sizing: border-box; }
+.gfr-panel::before, .gfr-panel::after { content: ""; position: absolute; width: 14px; height: 14px; border: 1px solid var(--gfr-base); pointer-events: none; }
+.gfr-panel::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.gfr-panel::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.gfr-panel-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px 9px 14px; cursor: grab; border-bottom: 1px solid #2a1114; background: linear-gradient(90deg, rgba(200, 20, 30, 0.16), transparent 60%); }
+.gfr-panel-head:active { cursor: grabbing; }
+.gfr-mark { width: 9px; height: 9px; transform: rotate(45deg); background: var(--gfr-base); box-shadow: 0 0 10px var(--gfr-base); flex: none; }
+.gfr-panel h2 { flex: 1; margin: 0; padding: 0; border: 0; font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase; color: #fff4dc; line-height: 1.2; }
+.gfr-panel-body { padding: 12px 14px 4px; display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; }
+.gfr-panel-foot { display: flex; align-items: center; gap: 12px; padding: 10px 14px 12px; border-top: 1px solid #2a1114; }
+.gfr-why { flex: 1; font-size: 10px; letter-spacing: 0.08em; color: #c9817f; }
+
+.gfr-panel button {
+  all: unset; box-sizing: border-box; cursor: pointer; text-align: center;
+  font-family: inherit; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #a89f8e; line-height: 1.2;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.gfr-panel button:focus-visible, .gfr-panel select:focus-visible, .gfr-panel input:focus-visible { outline: 1px solid #fff4dc; outline-offset: 1px; }
+.gfr-panel .gfr-x { font-size: 18px; letter-spacing: 0; padding: 0 6px 2px; color: #a89f8e; }
+.gfr-panel .gfr-x:hover { color: #fff; }
+.gfr-field { display: flex; align-items: center; gap: 10px; }
+.gfr-field > label { width: 74px; flex: none; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #8d8474; }
+.gfr-field.gfr-two { padding-left: 84px; gap: 8px; }
+.gfr-hint { margin: 0; font-family: Georgia, serif; font-style: italic; font-size: 12px; color: #9d9484; line-height: 1.4; }
+.gfr-seg { display: flex; flex: 1; border: 1px solid #33181b; background: #0a0809; }
+.gfr-panel .gfr-seg button { flex: 1; padding: 7px 6px 6px; border-left: 1px solid #251214; white-space: nowrap; }
+.gfr-panel .gfr-seg button:first-child { border-left: 0; }
+.gfr-panel .gfr-seg button:hover { color: #fff4dc; background: #1a0e10; }
+.gfr-panel .gfr-seg button.on { color: #fff; background: linear-gradient(180deg, #a3121a, #7d0d14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.gfr-seg.gfr-mode { flex: none; }
+.gfr-panel .gfr-seg.gfr-mode button { padding: 9px 6px 8px; font-size: 10px; }
+.gfr-seg.gfr-seg-sm { flex: none; }
+.gfr-panel .gfr-seg.gfr-seg-sm button { padding: 4px 7px 3px; font-size: 9px; letter-spacing: 0.08em; min-width: 30px; }
+
+.gfr-panel select, .gfr-panel input[type="number"] {
+  appearance: none; -webkit-appearance: none; flex: 1; min-width: 0; width: auto; height: 28px; margin: 0; padding: 0 8px; border-radius: 0;
+  font-family: Georgia, "Sarabun", serif; font-size: 13px; color: #f3ead6; background: #0a0809; border: 1px solid #33181b; box-shadow: none;
+}
+.gfr-panel select { padding-right: 22px; background-image: linear-gradient(45deg, transparent 50%, #c8141e 50%), linear-gradient(135deg, #c8141e 50%, transparent 50%); background-position: calc(100% - 12px) 12px, calc(100% - 7px) 12px; background-size: 5px 5px; background-repeat: no-repeat; }
+.gfr-panel select option { background: #100c0d; color: #f3ead6; }
+.gfr-panel input[type="number"] { font-family: "GFR Num", Georgia, serif; flex: none; width: 52px; text-align: center; font-weight: 700; -moz-appearance: textfield; }
+.gfr-panel input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.gfr-dcrow { gap: 14px; }
+.gfr-dcbox { width: auto !important; display: flex; align-items: center; gap: 10px; color: #fff4dc !important; font-size: 12px !important; font-weight: 700; }
+.gfr-panel .gfr-dcbox input { width: 64px; height: 34px; font-size: 18px; border-color: var(--gfr-base); }
+.gfr-panel .gfr-switch { display: flex; align-items: center; gap: 9px; text-align: left; color: #a89f8e; }
+.gfr-switch i { position: relative; width: 30px; height: 15px; border: 1px solid #4a2226; background: #0a0809; flex: none; }
+.gfr-switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 9px; height: 9px; background: #6b5f55; transition: left 0.15s, background 0.15s; }
+.gfr-switch.on { color: #fff4dc; }
+.gfr-switch.on i { border-color: var(--gfr-base); }
+.gfr-switch.on i::after { left: 17px; background: var(--gfr-base); box-shadow: 0 0 8px var(--gfr-base); }
+
+.gfr-listhead { display: flex; align-items: center; gap: 10px; margin-top: 2px; padding-top: 10px; border-top: 1px solid #2a1114; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #8d8474; }
+.gfr-listhead span:nth-child(2) { flex: 1; color: #fff4dc; letter-spacing: 0.1em; }
+.gfr-listhead .is-err, .gfr-mod.is-err { color: #ff6b63 !important; }
+.gfr-panel .gfr-listhead button { padding: 3px 8px 2px; border: 1px solid #33181b; font-size: 9px; }
+.gfr-panel .gfr-listhead button:hover { color: #fff; border-color: var(--gfr-base); }
+.gfr-list { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; min-height: 60px; max-height: 44vh; margin-right: -8px; padding: 0 8px 8px 0; scrollbar-width: thin; scrollbar-color: #5a1a1f #0a0809; }
+.gfr-prow { border: 1px solid #1f1416; background: #0d0b0c; opacity: 0.62; transition: opacity 0.15s, border-color 0.15s; }
+.gfr-prow.on { opacity: 1; border-color: #4a1a1f; background: linear-gradient(90deg, rgba(200, 20, 30, 0.1), transparent 55%), #0f0c0d; }
+.gfr-prow-main { display: flex; align-items: center; gap: 9px; padding: 6px 8px; }
+.gfr-panel .gfr-check { width: 16px; height: 16px; border: 1px solid #5a2a2e; background: #0a0809; flex: none; position: relative; }
+.gfr-panel .gfr-check[aria-pressed="true"] { border-color: var(--gfr-base); }
+.gfr-panel .gfr-check[aria-pressed="true"]::after { content: ""; position: absolute; inset: 3px; background: var(--gfr-base); transform: rotate(45deg) scale(0.85); box-shadow: 0 0 6px var(--gfr-base); }
+.gfr-prow img { width: 32px; height: 32px; object-fit: cover; object-position: top; border: 1px solid #33181b; flex: none; background: #000; }
+.gfr-who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.gfr-who b { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff4dc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gfr-who span { font-family: Georgia, "Sarabun", serif; font-size: 10.5px; color: #8d8474; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gfr-prow.is-offline .gfr-who span { color: #a8736f; }
+.gfr-mod { font-family: "GFR Num", Georgia, serif; min-width: 30px; text-align: right; font-size: 14px; font-weight: 700; color: #fff4dc; }
+.gfr-prow-extra, .gfr-rowspec { display: flex; align-items: center; gap: 6px; padding: 0 8px 7px 33px; flex-wrap: wrap; }
+.gfr-panel .gfr-chip { padding: 4px 8px 3px; border: 1px solid #33181b; font-size: 9px; color: #8d8474; }
+.gfr-panel .gfr-chip.on { color: #1a1206; background: #e3c376; border-color: #e3c376; }
+.gfr-mini { display: flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #8d8474; margin-left: auto; }
+.gfr-panel .gfr-mini input { width: 42px; height: 22px; font-size: 12px; padding: 0 2px; }
+.gfr-rowspec .gfr-mini { margin-left: 0; }
+.gfr-panel .gfr-rowspec select { height: 24px; font-size: 12px; flex: 1 1 96px; }
+.gfr-empty { flex: 1; padding: 6px 2px; font-family: Georgia, serif; font-style: italic; font-size: 12px; color: #a8736f; }
+.gfr-panel .gfr-go { padding: 11px 22px 10px; font-size: 12px; letter-spacing: 0.24em; color: #fff; background: linear-gradient(180deg, #b3141d, #7d0d14); border: 1px solid #e0242e; box-shadow: 0 0 18px rgba(200, 20, 30, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
+.gfr-panel .gfr-go:hover { background: linear-gradient(180deg, #d01923, #93101a); }
+.gfr-panel .gfr-go[disabled] { cursor: not-allowed; color: #6f665b; background: #141011; border-color: #2a1a1c; box-shadow: none; }
+
+/* =====================================================================
+   Chat card
+   ===================================================================== */
+.gfr-chat { text-align: center; padding: 8px 6px 7px; color: #eadfc8; background: linear-gradient(180deg, #151112, #0b090a); border: 1px solid #4a1a1f; font-family: "GFR Cinzel", Georgia, serif; }
+.gfr-chat-title { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+.gfr-chat-total { font-family: "GFR Num", Georgia, serif; font-size: 30px; font-weight: 700; line-height: 1.15; color: #fff7e8; text-shadow: 0 0 12px rgba(200, 20, 30, 0.8); }
+.gfr-chat-formula { font-family: Georgia, serif; font-size: 12px; color: #b5ab99; }
+.gfr-chat-formula b { color: #fff7e8; }
+.gfr-chat-nat, .gfr-chat-out { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; margin-top: 3px; }
+.gfr-chat-nat.n20, .gfr-chat-out.ok { color: #f5c451; }
+.gfr-chat-nat.n1, .gfr-chat-out.no { color: #e0524c; }
