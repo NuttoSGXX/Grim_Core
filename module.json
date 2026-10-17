@@ -1,40 +1,75 @@
 {
-  "id": "grim-fateroll",
-  "title": "Grim FateRoll",
-  "description": "Cinematic roll requests for dnd5e. The GM calls for a check, save, skill or tool roll; every chosen player gets a spinning dice sigil with their own die, modifiers and DC, with Natural 20 / Natural 1 effects.",
+  "id": "grim-core",
+  "title": "Grim Core",
+  "description": "One settings panel for every Grim module. Pick a colour theme, or any accent colour of your own, and Grim Almanac, Pulse, Theater of Mind, Jukebox, Stage Pacer, FateRoll, VN Stage, Encounter and Target all change together for the whole table.",
   "version": "1.0.0",
   "authors": [
     {
       "name": "DM Bank"
     }
   ],
-  "url": "https://github.com/NuttoSGXX/Grim_FateRoll",
-  "manifest": "https://github.com/NuttoSGXX/Grim_FateRoll/releases/latest/download/module.json",
-  "download": "https://github.com/NuttoSGXX/Grim_FateRoll/releases/download/v1.0.0/module.zip",
-  "bugs": "https://github.com/NuttoSGXX/Grim_FateRoll/issues",
+  "url": "https://github.com/NuttoSGXX/Grim_Core",
+  "manifest": "https://github.com/NuttoSGXX/Grim_Core/releases/latest/download/module.json",
+  "download": "https://github.com/NuttoSGXX/Grim_Core/releases/download/v1.0.0/module.zip",
+  "bugs": "https://github.com/NuttoSGXX/Grim_Core/issues",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
-  },
-  "relationships": {
-    "systems": [
-      {
-        "id": "dnd5e",
-        "type": "system",
-        "compatibility": {
-          "minimum": "4.0.0"
-        }
-      }
-    ]
   },
   "esmodules": [
     "scripts/main.js"
   ],
   "styles": [
-    "styles/fateroll.css"
+    "styles/grim-core.css"
   ],
-  "socket": true,
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "relationships": {
+    "recommends": [
+      {
+        "id": "grim-almanac",
+        "type": "module"
+      },
+      {
+        "id": "grim-pulse",
+        "type": "module"
+      },
+      {
+        "id": "grim-theater",
+        "type": "module"
+      },
+      {
+        "id": "grim-jukebox",
+        "type": "module"
+      },
+      {
+        "id": "stage-pacer",
+        "type": "module"
+      },
+      {
+        "id": "grim-fateroll",
+        "type": "module"
+      },
+      {
+        "id": "vn-stage",
+        "type": "module"
+      },
+      {
+        "id": "grim-encounter",
+        "type": "module"
+      },
+      {
+        "id": "grim-target",
+        "type": "module"
+      }
+    ]
+  },
   "license": "LICENSE.txt",
   "readme": "README.md",
-  "changelog": "https://github.com/NuttoSGXX/Grim_FateRoll/blob/main/CHANGELOG.md"
+  "changelog": "https://github.com/NuttoSGXX/Grim_Core/blob/main/CHANGELOG.md"
 }

@@ -2,8 +2,7 @@
 
 ## 1.0.0 — First release
 
-- GM roll-request panel for dnd5e checks, saves, skills and tools, with an optional DC.
-- Player-facing dice sigil overlay: each chosen player clicks their own die to roll.
-- Natural 20 / Natural 1 effects; Bless and Guidance d4s added automatically from active effects.
-- Each die takes its colours from the player's Dice So Nice appearance.
-- Sigil colour setting; follows Grim Core.
+- One GM panel that sets the colour theme of every Grim module for the whole table.
+- Four built-in themes (Crimson, Ash, Amethyst, Abyss) and Custom (any accent, dark or light surfaces, tint slider).
+- Follows: Grim Almanac, Theater of Mind, Pulse, Jukebox, Stage Pacer, FateRoll, VN Stage, Encounter and Target; each can be unticked.
+- Macro API: `open`, `setTheme`, `getTheme`, `palette`, `modules`.

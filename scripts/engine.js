@@ -37,14 +37,15 @@ export const TARGETS = [
   },
   {
     id: "grim-jukebox", title: "Grim Jukebox", setting: "theme", sheet: "--gjb-", skip: ["vinyl"],
-    // Jukebox 0.1.x declares its tokens on "#gjb", which outranks its own "[data-gjb-theme]" rules,
+    // Jukebox declares its tokens on "#gjb", which outranks its own "[data-gjb-theme]" rules,
     // so its built-in themes never show. Re-issue the chosen theme on the same selector.
     lift: { from: (base) => `[data-gjb-theme="${base}"]`, to: "#gjb, #gjb-yt, #gjb-modal" }
   },
   { id: "stage-pacer", title: "Stage Pacer", setting: "theme", sheet: "--sp-", skip: ["red", "yellow", "blue"] },
   { id: "grim-fateroll", title: "Grim FateRoll", accent: { setting: "accent", selector: ".gfr-overlay, .gfr-panel", token: "--gfr-base" } },
   { id: "vn-stage", title: "Grim VN Stage", table: { selector: "#vn-panel", prefix: "--gv-", alias: { soft: "accent-soft" } } },
-  { id: "grim-encounter", title: "Grim Encounter", table: { selector: "#efx-panel", prefix: "--ge-", alias: { soft: "accent-soft" } } }
+  { id: "grim-encounter", title: "Grim Encounter", table: { selector: "#efx-panel", prefix: "--ge-", alias: { soft: "accent-soft" } } },
+  { id: "grim-target", title: "Grim Target", setting: "theme", sheet: "--gtg-" }
 ];
 
 /** Tokens this panel uses for itself, so it previews the theme it is editing. */
